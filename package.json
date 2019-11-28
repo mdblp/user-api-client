@@ -8,6 +8,9 @@
   "homepage": "https://github.com/tidepool-org/user-api-client",
   "bugs": "https://github.com/tidepool-org/user-api-client/issues",
   "license": "BSD-2-Clause",
+  "publishConfig": {
+    "registry": "https://nexus.ci.diabeloop.eu/repository/your-loops-npm/"
+  },
   "author": {
     "name": "Kent Quirk",
     "email": "kent@tidepool.org",

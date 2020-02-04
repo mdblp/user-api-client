@@ -1,6 +1,6 @@
 {
   "name": "user-api-client",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "An npm library to make it easy to use the user-api.",
   "keywords": [
     "tidepool, user-api"
@@ -8,6 +8,9 @@
   "homepage": "https://github.com/tidepool-org/user-api-client",
   "bugs": "https://github.com/tidepool-org/user-api-client/issues",
   "license": "BSD-2-Clause",
+  "publishConfig": {
+    "registry": "https://nexus.ci.diabeloop.eu/repository/your-loops-npm/"
+  },
   "author": {
     "name": "Kent Quirk",
     "email": "kent@tidepool.org",
@@ -31,7 +34,7 @@
   },
   "repository": "https://github.com/tidepool-org/user-api-client.git",
   "dependencies": {
-    "amoeba": "0.8.0",
+    "amoeba": "0.8.1",
     "bunyan": "1.8.12",
     "lodash": "4.17.15",
     "request": "2.88.0"

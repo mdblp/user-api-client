@@ -500,11 +500,11 @@ describe('lib/client.js', function(){
       it('should call back with error on non 200 response code', function(done){
         request.callsArgWith(1, null, {statusCode: 201, headers: {'x-tidepool-session-token': serverToken}}, '{ "howdy": "hi" }');
 
-        client.withServerToken(function(err, userData) {
-          expect(err).to.have.property('statusCode').that.equals(503);
-          expect(err).to.have.property('message');
-          expect(userData).to.not.exist;
-          expect(request).to.have.been.calledOnce;
+        try {
+          client.withServerToken(function(err, userData) {
+            expect(false).to.be(true);
+          });
+        } catch (error) {
           expect(request).to.have.been.calledWith(
             {
               url: apiHost + '/serverlogin',
@@ -516,18 +516,19 @@ describe('lib/client.js', function(){
               rejectUnauthorized: false
             }
           );
+          expect(error).to.have.property('message').that.equals('Bad status on communications with user-api');
           done();
+          }
         });
-      });
 
       it('should call back with error on 200 response code and no token header', function(done){
         request.callsArgWith(1, null, {statusCode: 200, headers: {}}, '{ "howdy": "hi" }');
 
-        client.withServerToken(function(err, userData) {
-          expect(err).to.have.property('statusCode').that.equals(503);
-          expect(err).to.have.property('message');
-          expect(userData).to.not.exist;
-          expect(request).to.have.been.calledOnce;
+        try {
+          client.withServerToken(function(err, userData) {
+            expect(false).to.be(true);
+          });
+        } catch (error) {
           expect(request).to.have.been.calledWith(
             {
               url: apiHost + '/serverlogin',
@@ -539,8 +540,10 @@ describe('lib/client.js', function(){
               rejectUnauthorized: false
             }
           );
+          expect(error).to.have.property('message').that.equals('Unable to initiate communications with user-api');
           done();
-        });
+        }
+
       });
 
       it('should call back with serverToken on 200 response code', function(done){

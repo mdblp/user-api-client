@@ -30,7 +30,9 @@
   "main": "index.js",
   "scripts": {
     "test": "mocha",
-    "lint": "jshint"
+    "lint": "jshint",
+    "security-checks": "npm audit --production --registry=https://registry.npmjs.org/ --audit-level=moderate",
+    "build-ci": "npm install && npm run security-checks",
   },
   "repository": "https://github.com/tidepool-org/user-api-client.git",
   "dependencies": {

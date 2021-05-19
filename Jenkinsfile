@@ -35,10 +35,12 @@ pipeline {
                 dir("test-dir") {
                     unstash "test"
                 }
-                sh '''
-                    cd test-dir
-                    npm run test
-                '''
+                withCredentials([string(credentialsId: 'nexus-token', variable: 'NEXUS_TOKEN')]) {
+                    sh '''
+                        cd test-dir
+                        npm run test
+                    '''
+                }
             }
         }
         stage('Publish') {

@@ -1,55 +1,58 @@
+#!groovy
 @Library('mdblp-library') _
 pipeline {
     agent any
+    triggers {
+        //Check for modifications in Bitbucket every hours
+        //This is the condition for the bitbucket webhook trigger to work
+        pollSCM('30 * * * *')
+    }
+    environment {
+        JUNIT_REPORT_PATH = "tests/report.xml"
+    }
     stages {
-        stage('Initialization') {
-            steps {
-                script {
-                    utils.initPipeline()
-                    if (env.GIT_COMMIT == null) {
-                        // git commit id must be a 40 characters length string (lower case or digits)
-                        env.GIT_COMMIT = "f".multiply(40)
-                    }
-                    env.RUN_ID = UUID.randomUUID().toString()
+        stage('Build & package') {
+            agent {
+                dockerfile {
+                    filename 'jenkins-build.dockerfile'
+                    reuseNode true
                 }
             }
+            steps {
+                withCredentials([string(credentialsId: 'nexus-token', variable: 'NEXUS_TOKEN')]) {
+                    sh 'npm install'
+                    sh 'npm run build'
+                    stash name: "test", includes: "**"
+                    //we could execute npm version to automatically update the version
+                    // make security check and lint
+                    sh 'npm run security-check && npm run lint'
+                }
+                stash name: utils.packStashName, includes: "dist/**"
+
+            }
         }
-        stage('Build') {
+        stage('Running tests') {
             agent {
                 docker {
-                    image "docker.ci.diabeloop.eu/node-build:12"
+                    image 'node:12-alpine'
                 }
             }
             steps {
-                withCredentials([string(credentialsId: 'nexus-token', variable: 'NEXUS_TOKEN')]) {
-                    sh "npm version"
-                    sh "npm install"
-                    sh "npm run build-ci"
-                    stash name: "node_modules", includes: "node_modules/**"
+                dir("test-dir") {
+                    unstash "test"
                 }
-            }
-        }
-        stage('Package') {
-            steps {
-                withCredentials([string(credentialsId: 'nexus-token', variable: 'NEXUS_TOKEN')]) {
-                    pack()
-                }
-            }
-        }
-        stage('Documentation') {
-            steps {
-                unstash "node_modules"
-                genDocumentation()
-                dir("output") {
-                    archiveArtifacts artifacts: '*-soup.md', allowEmptyArchive: true
-                }
+                sh '''
+                    cd test-dir
+                    npm run test
+                '''
             }
         }
         stage('Publish') {
-            when { branch "dblp" }
+            when { branch "master" }
             steps {
                 publish()
             }
         }
-    }
+   }
+
 }

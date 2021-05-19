@@ -2,10 +2,8 @@ module: user-api-client
 type: nodejs
 runTests: false
 testCommand: npm test
-docker: true
+docker: false
 securityScan: true
-publishNpm: false
+publishNpm: true
 publishS3: false
-publishSoupBucket: com.diabeloop.backloops.docs
-publishOpenapiBucket: com.diabeloop.backloops.docs
-dockerPushToProduction: true
+dockerPushToProduction: false

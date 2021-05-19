@@ -23,8 +23,6 @@ pipeline {
                     sh 'npm run build-ci'
                     stash name: "test", includes: "**"
                 }
-                stash name: utils.packStashName, includes: "dist/**"
-
             }
         }
         stage('Running tests') {

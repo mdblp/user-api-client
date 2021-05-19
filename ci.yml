@@ -3,7 +3,7 @@ type: nodejs
 runTests: false
 testCommand: npm test
 docker: false
-securityScan: true
+securityScan: false
 publishNpm: true
 publishS3: false
 dockerPushToProduction: false

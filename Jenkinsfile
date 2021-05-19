@@ -20,12 +20,8 @@ pipeline {
             }
             steps {
                 withCredentials([string(credentialsId: 'nexus-token', variable: 'NEXUS_TOKEN')]) {
-                    sh 'npm install'
-                    sh 'npm run build'
+                    sh 'npm run build-ci'
                     stash name: "test", includes: "**"
-                    //we could execute npm version to automatically update the version
-                    // make security check and lint
-                    sh 'npm run security-check && npm run lint'
                 }
                 stash name: utils.packStashName, includes: "dist/**"
 
